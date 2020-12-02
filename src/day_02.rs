@@ -10,17 +10,19 @@ struct PasswordCheck {
     password: String,
 }
 
+#[allow(dead_code)]
 impl PasswordCheck {
+    fn check_count(&self) -> bool {
+        let count = self.password.chars()
+            .filter(|c| c == &self.letter)
+            .count();
+        return count <= self.max_occurrence && count >= self.min_occurrence
+    }
+
     fn check_position(&self) -> bool {
-        (match self.password.chars().nth(self.min_occurrence - 1) {
-            Some(letter) => letter == self.letter,
-            None => false
-        })
+        (self.password.chars().nth(self.min_occurrence - 1).unwrap() == self.letter)
             ^
-            (match self.password.chars().nth(self.max_occurrence - 1) {
-                Some(letter) => letter == self.letter,
-                None => false
-            })
+            (self.password.chars().nth(self.max_occurrence - 1).unwrap() == self.letter)
     }
 }
 
