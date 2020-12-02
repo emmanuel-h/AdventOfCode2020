@@ -21,8 +21,7 @@ fn parse_file(expenses: &mut Vec<i32>, filename: String) {
     let file = File::open(filename).unwrap();
     let reader = BufReader::new(file);
 
-    for line in reader.lines() {
-        let expense = line;
+    for expense in reader.lines() {
         expenses.push(expense.unwrap().parse::<i32>().unwrap());
     }
 }
