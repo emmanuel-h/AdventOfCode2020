@@ -11,24 +11,28 @@ struct PasswordCheck {
 }
 
 impl PasswordCheck {
-    fn check(&self) -> bool {
-        let count = self.password.chars()
-            .filter(|c| c == &self.letter)
-            .count();
-        return count <= self.max_occurrence && count >= self.min_occurrence
+    fn check_position(&self) -> bool {
+        (match self.password.chars().nth(self.min_occurrence - 1) {
+            Some(letter) => letter == self.letter,
+            None => false
+        })
+            ^
+            (match self.password.chars().nth(self.max_occurrence - 1) {
+                Some(letter) => letter == self.letter,
+                None => false
+            })
     }
 }
 
 pub(crate) fn day_02(filename: String) -> usize {
     let reg = Regex::new(r"^(\d{1,2})-(\d{1,2}) ([a-z]): ([a-z]{0,100})$").unwrap();
-    let mut passwords_to_check:Vec<PasswordCheck> = Vec::new();
+    let mut passwords_to_check: Vec<PasswordCheck> = Vec::new();
 
     parse_file(&mut passwords_to_check, filename, reg);
 
     passwords_to_check.iter()
-        .filter(|p| p.check())
+        .filter(|p| p.check_position())
         .count()
-
 }
 
 fn parse_file(passwords_to_check: &mut Vec<PasswordCheck>, filename: String, reg: Regex) {
@@ -43,7 +47,7 @@ fn parse_file(passwords_to_check: &mut Vec<PasswordCheck>, filename: String, reg
                     letter: cap[3].parse().unwrap(),
                     min_occurrence: cap[1].parse().unwrap(),
                     max_occurrence: cap[2].parse().unwrap(),
-                    password: cap[4].parse().unwrap()
+                    password: cap[4].parse().unwrap(),
                 }
             );
         }
